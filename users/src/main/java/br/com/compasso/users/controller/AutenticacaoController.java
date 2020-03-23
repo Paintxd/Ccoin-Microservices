@@ -47,6 +47,7 @@ public class AutenticacaoController {
 			Optional<Usuario> usuario = userRepo.findByLogin(form.getLogin());
 			if(usuario.isPresent()) {
 				Usuario userCast = usuario.get();
+				System.out.println("wass here");
 				return ResponseEntity.ok(new TokenDto(token, "Bearer", userCast.getId()));
 			} else {
 				return ResponseEntity.badRequest().build();

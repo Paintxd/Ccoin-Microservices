@@ -18,6 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.compasso.resgate.controller.dto.StatusResgateDto;
 import br.com.compasso.resgate.controller.form.CobrancaForm;
+import br.com.compasso.resgate.controller.form.EmailForm;
 import br.com.compasso.resgate.controller.form.ResgateForm;
 import br.com.compasso.resgate.model.Resgate;
 import br.com.compasso.resgate.model.StatusResgate;
@@ -27,6 +28,7 @@ import br.com.compasso.resgate.repository.ResgateRepository;
 import br.com.compasso.resgate.repository.StatusResgateRepository;
 import br.com.compasso.resgate.repository.TiposStatusRepository;
 import br.com.compasso.resgate.service.CobrancaService;
+import br.com.compasso.resgate.service.EmailService;
 
 @CrossOrigin
 @RestController
@@ -48,6 +50,9 @@ public class ResgatesController {
 	@Autowired
 	private CobrancaService cobra;
 	
+	@Autowired
+	private EmailService emailService;
+	
 	private Double valorCompra = 0.0;
 	
 	@PostMapping("/{userId}")
@@ -61,7 +66,9 @@ public class ResgatesController {
 				valorCompra += faz.ReservaItensGetValor();
 			});
 			
-			cobra.realizaCobranca(new CobrancaForm(userId, valorCompra));
+			EmailForm emailForm = cobra.realizaCobranca(new CobrancaForm(userId, valorCompra));
+			emailForm.setValorCompra(valorCompra);
+			emailService.mail(emailForm);
 			
 			resgateRepo.save(resgate);
 			
@@ -71,8 +78,6 @@ public class ResgatesController {
 			statusResgateRepo.save(statusResgate);
 			
 			URI uri = uriBuilder.path("/resgate/{id}").buildAndExpand(statusResgate.getId()).toUri();
-			
-//			mailSend.compraMail(usuario.getEmail(), valorCompra);
 			
 			return ResponseEntity.created(uri).body(new StatusResgateDto(statusResgate));
 		} catch (Exception e) {

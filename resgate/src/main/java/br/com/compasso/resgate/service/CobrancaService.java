@@ -7,20 +7,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import br.com.compasso.resgate.controller.form.CobrancaForm;
+import br.com.compasso.resgate.controller.form.EmailForm;
 
 @Service
 public class CobrancaService {
 
-	public void realizaCobranca(CobrancaForm cobranca) {
+	public EmailForm realizaCobranca(CobrancaForm cobranca) {
 		RestTemplate client = new RestTemplate();
 		HttpEntity<CobrancaForm> request = new HttpEntity<CobrancaForm>(cobranca);
-		
 
-		ResponseEntity<String> sucesso =  client.exchange("http://localhost:8080/cobranca", HttpMethod.POST, request, String.class);
+		ResponseEntity<EmailForm> sucesso =  client.exchange("http://localhost:8080/cobranca", HttpMethod.POST, request, EmailForm.class);
 		
-		String resposta = sucesso.getBody();
+		EmailForm mail = sucesso.getBody();
 		
-		System.out.println(resposta + " <------");
+		return mail;
 	}
 
 }

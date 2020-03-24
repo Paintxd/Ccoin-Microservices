@@ -11,9 +11,11 @@ import (
 )
 
 type Info struct {
-	Email       string
-	Nome        string
-	ValorCompra float64
+	Email        string
+	Nome         string
+	Valor        float64
+	Tipo         string
+	Destinatario string
 }
 
 func (i Info) Send() {
@@ -33,14 +35,18 @@ func (i Info) Send() {
 
 	result := tpl.String()
 	m := gomail.NewMessage()
-	m.SetHeader("From", "testada@teste.com")
+	m.SetHeader("From", "Ccoin@compasso.com.br")
 	m.SetHeader("To", i.Email)
-	m.SetHeader("Subject", "teste subj")
+	if i.Tipo == "transferencia" {
+		m.SetHeader("Subject", "Transferencia efetuada")
+	} else {
+		m.SetHeader("Subject", "Compra efetuada")
+	}
 	m.SetBody("text/html", result)
-	// m.Attach("template.html") enviar um download
 
+	print("sending")
 	d := gomail.NewDialer("smtp.gmail.com", 587, "joaoterceiro366@gmail.com", "magica123")
-
+	print("sended")
 	if err := d.DialAndSend(m); err != nil {
 		panic(err)
 	}
@@ -57,6 +63,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	print("mailing")
 	i.Send()
 }
 

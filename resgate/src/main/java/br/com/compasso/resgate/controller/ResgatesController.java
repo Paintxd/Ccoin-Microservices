@@ -67,7 +67,8 @@ public class ResgatesController {
 			});
 			
 			EmailForm emailForm = cobra.realizaCobranca(new CobrancaForm(userId, valorCompra));
-			emailForm.setValorCompra(valorCompra);
+			emailForm.setValor(valorCompra);
+			emailForm.setTipo("compra");
 			emailService.mail(emailForm);
 			
 			resgateRepo.save(resgate);

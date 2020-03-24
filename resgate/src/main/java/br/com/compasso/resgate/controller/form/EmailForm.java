@@ -4,7 +4,8 @@ public class EmailForm {
 
 	private String email;
 	private String nome;
-	private Double valorCompra;
+	private Double valor;
+	private String tipo;
 
 	public String getEmail() {
 		return email;
@@ -22,12 +23,20 @@ public class EmailForm {
 		this.nome = nome;
 	}
 
-	public Double getValorCompra() {
-		return valorCompra;
+	public Double getValor() {
+		return valor;
 	}
 
-	public void setValorCompra(Double valorCompra) {
-		this.valorCompra = valorCompra;
+	public void setValor(Double valor) {
+		this.valor = valor;
+	}
+
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
 	}
 
 }

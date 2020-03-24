@@ -11,12 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.compasso.users.controller.dto.TransferenciaDto;
+import br.com.compasso.users.controller.form.EmailForm;
 import br.com.compasso.users.controller.form.TransferenciaForm;
 import br.com.compasso.users.model.Transferencia;
 import br.com.compasso.users.model.Usuario;
 import br.com.compasso.users.repository.TransferenciaRepository;
 import br.com.compasso.users.repository.UsuarioRepository;
-import br.com.compasso.users.service.MailSenderService;
+import br.com.compasso.users.service.EmailService;
 
 @RestController
 @RequestMapping("/transferir")
@@ -29,7 +30,7 @@ public class TransferenciaController {
 	private TransferenciaRepository transfRepo;
 	
 	@Autowired
-	private MailSenderService mailSend;
+	private EmailService mailSend;
 	
 	@PostMapping
 	@Transactional
@@ -41,16 +42,13 @@ public class TransferenciaController {
 			
 			Usuario destino = userRepo.findByNome(dadosTransf.getNomeDestinatario());
 			destino.Deposita(dadosTransf.getValor());
-			try {
-				mailSend.origemTransferenciaMail(destino.getEmail(), origem.getEmail(), dadosTransf.getValor());
-				mailSend.destinatarioTransferenciaMail(destino.getEmail(), origem.getEmail(), dadosTransf.getValor());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+
 			Transferencia transferencia = new Transferencia(origem, destino, dadosTransf.getValor());
 			transfRepo.save(transferencia);
 			
-		return ResponseEntity.ok(new TransferenciaDto(origem, destino, dadosTransf.getValor()));
+			mailSend.mail(new EmailForm(transferencia));
+			
+			return ResponseEntity.ok(new TransferenciaDto(origem, destino, dadosTransf.getValor()));
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
 		}

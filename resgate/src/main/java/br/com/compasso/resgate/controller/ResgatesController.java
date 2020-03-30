@@ -20,6 +20,7 @@ import br.com.compasso.resgate.controller.dto.StatusResgateDto;
 import br.com.compasso.resgate.controller.form.CobrancaForm;
 import br.com.compasso.resgate.controller.form.EmailForm;
 import br.com.compasso.resgate.controller.form.ResgateForm;
+import br.com.compasso.resgate.messaging.RabbitService;
 import br.com.compasso.resgate.model.Resgate;
 import br.com.compasso.resgate.model.StatusResgate;
 import br.com.compasso.resgate.model.TiposStatus;
@@ -28,7 +29,6 @@ import br.com.compasso.resgate.repository.ResgateRepository;
 import br.com.compasso.resgate.repository.StatusResgateRepository;
 import br.com.compasso.resgate.repository.TiposStatusRepository;
 import br.com.compasso.resgate.service.CobrancaService;
-import br.com.compasso.resgate.service.EmailService;
 
 @CrossOrigin
 @RestController
@@ -51,7 +51,7 @@ public class ResgatesController {
 	private CobrancaService cobra;
 	
 	@Autowired
-	private EmailService emailService;
+	private RabbitService mail;
 	
 	private Double valorCompra = 0.0;
 	
@@ -69,7 +69,7 @@ public class ResgatesController {
 			EmailForm emailForm = cobra.realizaCobranca(new CobrancaForm(userId, valorCompra));
 			emailForm.setValor(valorCompra);
 			emailForm.setTipo("compra");
-			emailService.mail(emailForm);
+			mail.send(emailForm);
 			
 			resgateRepo.save(resgate);
 			

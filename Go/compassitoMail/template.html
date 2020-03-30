@@ -10,19 +10,19 @@
       src="http://www.compasso.com.br/wp-content/uploads/2020/02/LogoCompasso-preto.png" />
 
     <div style="text-align: center;">
-      <h1>Olá <span style="color: #ffb500;">{{ .Nome }}</span>!</h1>
+      <h1>Olá <span style="color: #ffb500;">{{.Nome}}</span>!</h1>
       <div>
-        {{ if eq .Tipo "compra" }}
+        {{if eq .Tipo "compra"}}
         <h3>Sua compra no valor de</h3>
-        <h1 style="color: #ffb500;">CP$ {{ .Valor }}</h1>
+        <h1 style="color: #ffb500;">CP$ {{.Valor}}</h1>
         <h3>foi efetuada com Sucesso!</h3>
 
-        {{ else }}
+        {{else}}
         <h3>Sua transferência no valor de</h3>
-        <h1 style="color: #ffb500;">CP$ {{ .Valor }}</h1>
-        <h3>para {{ .Destinatario }} foi efetuada com Sucesso!</h3>
+        <h1 style="color: #ffb500;">CP$ {{.Valor}}</h1>
+        <h3>para {{.Destinatario}} foi efetuada com Sucesso!</h3>
 
-        {{ end }}
+        {{end}}
       </div>
     </div>
   </div>

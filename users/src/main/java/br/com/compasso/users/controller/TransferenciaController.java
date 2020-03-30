@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.compasso.users.controller.dto.TransferenciaDto;
 import br.com.compasso.users.controller.form.EmailForm;
 import br.com.compasso.users.controller.form.TransferenciaForm;
+import br.com.compasso.users.messaging.RabbitService;
 import br.com.compasso.users.model.Transferencia;
 import br.com.compasso.users.model.Usuario;
 import br.com.compasso.users.repository.TransferenciaRepository;
 import br.com.compasso.users.repository.UsuarioRepository;
-import br.com.compasso.users.service.EmailService;
 
 @RestController
 @RequestMapping("/transferir")
@@ -30,7 +30,7 @@ public class TransferenciaController {
 	private TransferenciaRepository transfRepo;
 	
 	@Autowired
-	private EmailService mailSend;
+	private RabbitService mail;
 	
 	@PostMapping
 	@Transactional
@@ -46,7 +46,7 @@ public class TransferenciaController {
 			Transferencia transferencia = new Transferencia(origem, destino, dadosTransf.getValor());
 			transfRepo.save(transferencia);
 			
-			mailSend.mail(new EmailForm(transferencia));
+			mail.send(new EmailForm(transferencia));
 			
 			return ResponseEntity.ok(new TransferenciaDto(origem, destino, dadosTransf.getValor()));
 		} catch (Exception e) {

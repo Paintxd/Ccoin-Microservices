@@ -1,11 +1,9 @@
-package handlers
+package model
 
 import (
 	"bytes"
-	"encoding/json"
 	"html/template"
 	"log"
-	"net/http"
 
 	"gopkg.in/gomail.v2"
 )
@@ -39,34 +37,14 @@ func (i Info) Send() {
 	m.SetHeader("To", i.Email)
 	if i.Tipo == "transferencia" {
 		m.SetHeader("Subject", "Transferencia efetuada")
-	} else {
-		m.SetHeader("Subject", "Compra efetuada")
 	}
+	m.SetHeader("Subject", "Compra efetuada")
 	m.SetBody("text/html", result)
 
-	print("sending")
 	d := gomail.NewDialer("smtp.gmail.com", 587, "joaoterceiro366@gmail.com", "magica123")
-	print("sended")
+
 	if err := d.DialAndSend(m); err != nil {
 		panic(err)
 	}
 
-}
-
-func Create(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
-	var i Info
-
-	err := json.NewDecoder(r.Body).Decode(&i)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	print("mailing")
-	i.Send()
-}
-
-func enableCors(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 }
